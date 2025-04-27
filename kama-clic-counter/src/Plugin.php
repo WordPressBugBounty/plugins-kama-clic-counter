@@ -41,7 +41,6 @@ class Plugin {
 	public $download_shortcode;
 
 	public function __construct( string $main_file_path ) {
-
 		$this->set_wpdb_tables();
 
 		$this->basename = plugin_basename( $main_file_path );
@@ -49,26 +48,18 @@ class Plugin {
 		$this->dir = dirname( $main_file_path );
 		$this->url = plugins_url( '', $main_file_path );
 
-		$this->info = get_file_data(
-			$main_file_path,
-			[
-				'name'    => 'Plugin Name',
-				'version' => 'Version',
-				'php_ver' => 'Requires PHP',
-			]
-		);
+		$this->info = get_file_data( $main_file_path, [
+			'name'    => 'Plugin Name',
+			'version' => 'Version',
+			'php_ver' => 'Requires PHP',
+		] );
 
 		$this->opt = new Options();
 	}
 
-	/**
-	 * The plugin initialization. Performs on `plugins_loaded` hook.
-	 *
-	 * @return void
-	 */
-	public function init() {
+	public function init(): void {
 
-		if ( ! $this->check_dependencies() ) {
+		if( ! $this->check_dependencies() ){
 			return;
 		}
 
@@ -106,17 +97,11 @@ class Plugin {
 		$wpdb->kcc_clicks = $wpdb->prefix . 'kcc_clicks';
 	}
 
-	/**
-	 * @return void
-	 */
-	private function set_admin_access() {
+	private function set_admin_access(): void {
 		$this->admin_access = current_user_can( 'manage_options' );
 	}
 
-	/**
-	 * @return void
-	 */
-	private function set_manage_access() {
+	private function set_manage_access(): void {
 
 		$this->manage_access = apply_filters( 'kcc_manage_access', null );
 
@@ -138,7 +123,7 @@ class Plugin {
 		}
 	}
 
-	public function add_toolbar_menu( $toolbar ){
+	public function add_toolbar_menu( $toolbar ) {
 
 		$toolbar->add_menu( [
 			'id'    => 'kcc',
@@ -148,9 +133,7 @@ class Plugin {
 	}
 
 	public function check_dependencies(): bool {
-
-		if ( version_compare( PHP_VERSION, $this->info['php_ver'], '<=' ) ) {
-
+		if( version_compare( PHP_VERSION, $this->info['php_ver'], '<=' ) ){
 			Helpers::notice_message(
 				'<b>Kama Click Counter</b> plugin requires PHP version <b>' . $this->info['php_ver'] . '</b> or higher. Please upgrade PHP or diactivate the plugin.',
 				'error'
@@ -162,10 +145,10 @@ class Plugin {
 		return true;
 	}
 
-	public function activation(){
+	public function activation() {
 		global $wpdb;
 
-		if ( ! $this->check_dependencies() ) {
+		if( ! $this->check_dependencies() ){
 			return;
 		}
 
